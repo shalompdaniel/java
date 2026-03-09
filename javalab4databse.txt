@@ -1,0 +1,89 @@
+package com.fxproject;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+import java.sql.*;
+
+public class MovieApp extends Application {
+
+    @Override
+    public void start(Stage stage) {
+        // Simple UI
+        Label label = new Label("FX Project - DB Connectivity Test");
+        StackPane root = new StackPane(label);
+        Scene scene = new Scene(root, 400, 200);
+
+        stage.setTitle("Database Test");
+        stage.setScene(scene);
+        stage.show();
+
+        // Test DB connection when app opens
+        testDbConnection();
+    }
+
+    private void testDbConnection() {
+        String url = "jdbc:mysql://localhost:3306/yourdbname";
+        String user = "root";      // change it
+        String password = "";      // change it
+
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("DB Status");
+            alert.setHeaderText("Connection Successful");
+            alert.setContentText("Database connected successfully!");
+            alert.show();
+
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("DB Error");
+            alert.setHeaderText("Connection Failed");
+            alert.setContentText(e.getMessage());
+            alert.show();
+        }
+    }
+
+    public static void main(String[] args) {
+        launch();
+    }
+}
+
+
+
+package com.example.lab3java;
+
+public class Movie {
+    private String id, title, genre, review, rating;
+    private java.time.LocalDate releaseDate;
+    private double score;
+
+    public Movie(String id, String title, String genre, String review, String rating,
+                 java.time.LocalDate releaseDate, double score) {
+        this.id = id;
+        this.title = title;
+        this.genre = genre;
+        this.review = review;
+        this.rating = rating;
+        this.releaseDate = releaseDate;
+        this.score = score;
+    }
+
+    public String getId() { return id; }
+    public void setTitle(String t) { title = t; }
+    public void setGenre(String g) { genre = g; }
+    public void setReview(String r) { review = r; }
+    public void setRating(String r) { rating = r; }
+    public void setReleaseDate(java.time.LocalDate d) { releaseDate = d; }
+    public void setScore(double s) { score = s; }
+
+    @Override
+    public String toString() {
+        return id + " | " + title + " | " + genre + " | Rating: " + rating + " | Score: " + score;
+    }
+}
+S

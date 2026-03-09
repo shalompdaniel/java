@@ -1,0 +1,75 @@
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.URLConnection;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class NetworkingDemo {
+
+    public static void main(String[] args) {
+
+        // ============================
+        // PART 1: InetAddress Example
+        // ============================
+        try {
+            System.out.println("=== InetAddress Demo ===");
+
+            // Get IP address of a website
+            InetAddress inet = InetAddress.getByName("www.google.com");
+
+            System.out.println("Host Name : " + inet.getHostName());
+            System.out.println("IP Address: " + inet.getHostAddress());
+
+            // Check reachability (ping-like)
+            boolean status = inet.isReachable(3000);
+            System.out.println("Reachable : " + status);
+
+            // Get local host information
+            InetAddress local = InetAddress.getLocalHost();
+            System.out.println("Local Host: " + local.getHostName());
+            System.out.println("Local IP  : " + local.getHostAddress());
+
+        } catch (Exception e) {
+            System.out.println("InetAddress Error:");
+            e.printStackTrace();
+        }
+
+        // ==============================
+        // PART 2: URLConnection Example
+        // ==============================
+        try {
+            System.out.println("\n=== URLConnection Demo ===");
+
+            // Create URL object
+            URL url = new URL("https://www.example.com");
+
+            // Open connection
+            URLConnection connection = url.openConnection();
+
+            // Set timeout
+            connection.setConnectTimeout(5000);
+
+            // Display some connection info
+            System.out.println("Content Type   : " + connection.getContentType());
+            System.out.println("Content Length : " + connection.getContentLength());
+
+            // Read data from website
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(connection.getInputStream())
+            );
+
+            String line;
+            System.out.println("\n--- Website Content ---");
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            br.close();
+
+        } catch (Exception e) {
+            System.out.println("URLConnection Error:");
+            e.printStackTrace();
+        }
+    }
+}
+ 

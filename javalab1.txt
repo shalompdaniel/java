@@ -1,0 +1,112 @@
+import java.util.ArrayList;
+
+// 1. GENERIC INTERFACE
+interface MyGenericInterface<T> {
+    void addItem(T item);
+    T getItem(int index);
+    boolean searchItem(T item);
+}
+
+// 2. GENERIC CLASS IMPLEMENTING THE INTERFACE
+class MyGenericClass<T> implements MyGenericInterface<T> {
+
+    private ArrayList<T> list = new ArrayList<>();
+
+    @Override
+    public void addItem(T item) {
+        list.add(item);
+    }
+
+    @Override
+    public T getItem(int index) {
+        return list.get(index);
+    }
+
+    @Override
+    public boolean searchItem(T item) {
+        return list.contains(item);   // equality check
+    }
+
+    public ArrayList<T> getList() {
+        return list;
+    }
+}
+
+// 3. GENERIC METHOD TO DISPLAY ANY LIST
+class DisplayUtil {
+    public static <T> void displayList(ArrayList<T> list) {
+        for (T item : list) {
+            System.out.println(item);
+        }
+        System.out.println();
+    }
+}
+
+// 4. DOMAIN-SPECIFIC CLASS (MOVIE)
+class Movie {
+    private String title;
+    private double rating;
+
+    public Movie(String title, double rating) {
+        this.title = title;
+        this.rating = rating;
+    }
+
+    @Override
+    public String toString() {
+        return "Movie: " + title + " | Rating: " + rating;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Movie)) return false;
+
+        Movie m = (Movie) obj;
+        return this.title.equals(m.title) && this.rating == m.rating;
+    }
+}
+
+// 5. MAIN CLASS
+public class Main {
+    public static void main(String[] args) {
+
+        // Using Generic Class for Movie objects
+        MyGenericClass<Movie> movieStore = new MyGenericClass<>();
+
+        // ADDING MOVIES
+        movieStore.addItem(new Movie("Inception", 9.0));
+        movieStore.addItem(new Movie("Interstellar", 8.8));
+        movieStore.addItem(new Movie("Dune", 8.3));
+
+        // RETRIEVE BY INDEX
+        System.out.println("Movie at index 1:");
+        System.out.println(movieStore.getItem(1));
+        System.out.println();
+
+        // SEARCH FOR A MOVIE
+        Movie searchMovie = new Movie("Dune", 8.3);
+        System.out.println("Searching for Dune:");
+        System.out.println(movieStore.searchItem(searchMovie));
+        System.out.println();
+
+        // DISPLAY MOVIE LIST
+        System.out.println("Movie List:");
+        DisplayUtil.displayList(movieStore.getList());
+
+        // DISPLAY DIFFERENT TYPES WITH GENERIC METHOD
+        ArrayList<String> stringList = new ArrayList<>();
+        stringList.add("Hello");
+        stringList.add("World");
+
+        ArrayList<Integer> intList = new ArrayList<>();
+        intList.add(10);
+        intList.add(20);
+
+        System.out.println("String List:");
+        DisplayUtil.displayList(stringList);
+
+        System.out.println("Integer List:");
+        DisplayUtil.displayList(intList);
+    }
+}

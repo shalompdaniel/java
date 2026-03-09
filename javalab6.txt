@@ -1,0 +1,106 @@
+package campus;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+public class Server {
+
+    private static final int TCP_PORT = 5000;
+    private static final String MULTICAST_ADDRESS = "230.0.0.1";
+    private static final int MULTICAST_PORT = 4446;
+
+    // Thread-safe list
+    private static final List<String> clients =
+            Collections.synchronizedList(new ArrayList<>());
+
+    public static void main(String[] args) {
+
+        ExecutorService pool = Executors.newCachedThreadPool();
+
+        try (ServerSocket serverSocket = new ServerSocket(TCP_PORT)) {
+            System.out.println("Server started on port " + TCP_PORT);
+
+            // Thread for admin message sending
+            new Thread(Server::sendNotifications).start();
+
+            while (true) {
+                Socket socket = serverSocket.accept();
+                pool.execute(new ClientHandler(socket, clients));
+            }
+
+        } catch (IOException e) {
+            System.out.println("Server error: " + e.getMessage());
+        }
+    }
+
+    private static void sendNotifications() {
+        try (DatagramSocket socket = new DatagramSocket();
+             Scanner scanner = new Scanner(System.in)) {
+
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+
+            while (true) {
+                System.out.print("Enter event message: ");
+                String message = scanner.nextLine();
+
+                byte[] buffer = message.getBytes();
+
+                DatagramPacket packet = new DatagramPacket(
+                        buffer,
+                        buffer.length,
+                        group,
+                        MULTICAST_PORT
+                );
+
+                socket.send(packet);
+                System.out.println("Notification sent to all clients.");
+
+            }
+        } catch (IOException e) {
+            System.out.println("Notification error: " + e.getMessage());
+        }
+    }
+}
+ 
+
+package campus;
+
+import java.io.*;
+import java.net.Socket;
+import java.util.List;
+
+public class ClientHandler implements Runnable {
+
+    private Socket socket;
+    private List<String> clients;
+
+    public ClientHandler(Socket socket, List<String> clients) {
+        this.socket = socket;
+        this.clients = clients;
+    }
+
+    @Override
+    public void run() {
+        try (
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(S
+                    socket.getOutputStream(), true)
+        ) {
+            String clientInfo = in.readLine();
+            clients.add(clientInfo);
+
+            System.out.println("Client registered: " + clientInfo);
+            out.println("Registration successful");
+
+        } catch (IOException e) {
+            System.out.println("Client disconnected.");
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException ignored) {}
+        }
+    }
+}

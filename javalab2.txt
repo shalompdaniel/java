@@ -1,0 +1,116 @@
+import java.util.*;
+import java.util.stream.*;
+import java.util.function.*;
+
+class Movie {
+    String title;
+    double rating;
+    String genre;
+
+    Movie(String title, double rating, String genre) {
+        this.title = title;
+        this.rating = rating;
+        this.genre = genre;
+    }
+
+    @Override
+    public String toString() {
+        return title + " (" + rating + ", " + genre + ")";
+    }
+}
+
+public class MovieAppInput {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        List<Movie> movies = new ArrayList<>();
+
+        System.out.print("Enter number of movies: ");
+        int n = sc.nextInt();
+        sc.nextLine();
+
+        for (int i = 0; i < n; i++) {
+            System.out.println("\nEnter details for Movie " + (i + 1));
+
+            System.out.print("Title: ");
+            String title = sc.nextLine();
+
+            System.out.print("Rating: ");
+            double rating = sc.nextDouble();
+            sc.nextLine();
+
+            System.out.print("Genre: ");
+            String genre = sc.nextLine();
+
+            movies.add(new Movie(title, rating, genre));
+        }
+
+        // One user review input
+        System.out.print("\nEnter your review: ");
+        String userReview = sc.nextLine();
+
+        // ------------------------------------------
+        // 1. LAMBDA EXPRESSIONS
+        // ------------------------------------------
+
+        // Lambda with no argument
+        Runnable welcome = () -> System.out.println("\nMovie System Started");
+        welcome.run();
+
+        // Lambda with one argument
+        Consumer<String> review = message -> System.out.println("User Review: " + message);
+        review.accept(userReview);
+
+        // Lambda with two arguments (average calculation)
+        BiFunction<Double, Double, Double> avg = (a, b) -> (a + b) / 2;
+
+        if (movies.size() >= 2) {
+            double avgRating = avg.apply(movies.get(0).rating, movies.get(1).rating);
+            System.out.println("Average of first two movie ratings = " + avgRating);
+        }
+
+        // Block Lambda Expression (highly rated?)
+        Predicate<Movie> isHighRated = m -> {
+            if (m.rating >= 4.5)
+                return true;
+            else
+                return false;
+        };
+
+        System.out.println("\nChecking first movie high rating: " + isHighRated.test(movies.get(0)));
+
+        // ------------------------------------------
+        // 2. STREAM OPERATIONS
+        // ------------------------------------------
+
+        // FILTER
+        List<Movie> filtered = movies.stream()
+                .filter(m -> m.rating >= 4.5)
+                .collect(Collectors.toList());
+        System.out.println("\nMovies with rating >= 4.5: " + filtered);
+
+        // MAP
+        List<String> titles = movies.stream()
+                .map(m -> m.title)
+                .collect(Collectors.toList());
+        System.out.println("Movie Titles: " + titles);
+
+        // SORT
+        List<Movie> sorted = movies.stream()
+                .sorted((m1, m2) -> Double.compare(m2.rating, m1.rating))
+                .collect(Collectors.toList());
+        System.out.println("Sorted Movies (desc by rating): " + sorted);
+
+        // REDUCE (highest rating)
+        double highestRating = movies.stream()
+                .map(m -> m.rating)
+                .reduce(0.0, (a, b) -> Math.max(a, b));
+        System.out.println("Highest Rating: " + highestRating);
+
+        // COLLECT TO MAP
+        Map<String, Double> movieMap = movies.stream()
+                .collect(Collectors.toMap(m -> m.title, m -> m.rating));
+        System.out.println("Movie Map (title → rating): " + movieMap);
+    }
+}

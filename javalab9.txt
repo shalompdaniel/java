@@ -1,0 +1,67 @@
+import java.io.Serializable;
+
+public class StudentBean implements Serializable {
+
+    private int studentId;
+    private String name;
+    private String department;
+    private int attendance;
+
+    // No-argument constructor
+    public StudentBean() {
+    }
+
+    // Getter methods
+    public int getStudentId() {
+        return studentId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public int getAttendance() {
+        return attendance;
+    }
+
+    // Setter methods
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public void setAttendance(int attendance) {
+        this.attendance = attendance;
+    }
+} 
+
+
+public class Main {
+    public static void main(String[] args) {
+
+        StudentBean student = new StudentBean();
+
+        // Setting values
+        student.setStudentId(101);
+        student.setName("John");
+        student.setDepartment("CSE");
+        student.setAttendance(90);
+
+        // Getting values
+        System.out.println("Student ID: " + student.getStudentId());
+        System.out.println("Name: " + student.getName());
+        System.out.println("Department: " + student.getDepartment());
+        System.out.println("Attendance: " + student.getAttendance());
+    }
+} 
